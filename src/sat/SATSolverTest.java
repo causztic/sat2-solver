@@ -25,7 +25,7 @@ public class SATSolverTest {
     Literal nc = c.getNegation();
 	
 	// TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
-	public void readFile(String filename){
+	public Formula readFile(String filename){
 		boolean hasP = false;
 		Clause[] clauses = null;
 		int clausePointer = 0;
@@ -61,10 +61,12 @@ public class SATSolverTest {
 						literals[i] = temp.charAt(0) == '-' ? NegLiteral.make(temp.substring(1)) : PosLiteral.make(temp);
 					}
 					clauses[clausePointer] = makeCl(literals);
-					System.out.println(clauses[clausePointer]);
+//					System.out.println(clauses[clausePointer]);
 					clausePointer++;
 				}
+				sc.close();
 			} else {
+				sc.close();
 				throw new IOException("invalid format for CNF. no P found.");
 			}
 		} catch (FileNotFoundException e) {
@@ -72,16 +74,17 @@ public class SATSolverTest {
 		} catch (IOException e){
 			e.printStackTrace();
 		}
-        // SATSolver.solve(makeFm(clauses));
+		return makeFm(clauses);
 	}
 	
 	public static void main(String[] args){
 		if (args.length > 0){
 	        String fileName = args[0];
 	        SATSolverTest r = new SATSolverTest();
-	        r.readFile(fileName);
-	        r.testSATSolver1();
-	        r.testSATSolver2();
+	        Formula f = r.readFile(fileName);
+	        System.out.println(SATSolver.solve(f));
+//	        r.testSATSolver1();
+//	        r.testSATSolver2();
 		} else {
 			System.out.println("Supply the location of the file. Syntax: solver.jar file");
 			System.exit(1);
