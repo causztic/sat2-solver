@@ -85,9 +85,13 @@ public class SATSolver {
 		System.out.print("Substituing: ");
 		System.out.println(clauses);
 		for (Clause clause : clauses) {
-			clause = clause.reduce(l);
-			if (clause != null && !clause.isEmpty())
+			if (!clause.contains(l)){
 				c = c.add(clause);
+			} else {
+				clause = clause.reduce(l);
+				if (clause != null && !clause.isEmpty())
+					c = c.add(clause);
+			}
 		}
 		System.out.print("Substituted to: ");
 		System.out.println(c);
