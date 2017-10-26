@@ -1,8 +1,9 @@
+import java.util.List;
 
 public class Result {
 	
 	private boolean[] variables;
-	private String[] clauses;
+	private List<int[]> clauses;
 	
 	public boolean[] getVariables() {
 		return variables;
@@ -12,16 +13,16 @@ public class Result {
 		this.variables = variables;
 	}
 
-	public String[] getClauses() {
-		return clauses;
-	}
-
-	public void setClauses(String[] clauses) {
+	public Result(boolean[] variables, List<int[]> clauses){
+		this.variables = variables;
 		this.clauses = clauses;
 	}
 
-	public Result(boolean[] variables, String[] clauses){
-		this.variables = variables;
+	public List<int[]> getClauses() {
+		return clauses;
+	}
+
+	public void setClauses(List<int[]> clauses) {
 		this.clauses = clauses;
 	}
 }

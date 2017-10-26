@@ -2,7 +2,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Reader {
 	private String filename;
@@ -14,9 +17,8 @@ public class Reader {
 	public Result readFile(){
 		String line = null;
         boolean hasP = false;
-        int clausePointer = 0;
         boolean[] variables = null;
-        String[] clauses = null;
+        List<int[]> clauses = null;
         try {
             // FileReader reads text files in the default encoding.
             FileReader fileReader = new FileReader(filename);
@@ -38,7 +40,7 @@ public class Reader {
                 		String[] parameters = line.split("\\s+");
                 		if (parameters[1].equals("cnf")){
                 			variables = new boolean[Integer.parseInt(parameters[2])];
-                			clauses = new String[Integer.parseInt(parameters[3])];
+                			clauses = new ArrayList<int[]>(Integer.parseInt(parameters[3]));
                 		} else {
             	        	bufferedReader.close();
                 			throw new IOException("Invalid CNF file. Problem FORMAT must be CNF.");
@@ -50,10 +52,14 @@ public class Reader {
                 	throw new IOException("Invalid file. Duplicate p found");
                 } else {
                 	// if there is p, set the variables
-                	clauses[clausePointer] = line.trim().substring(0, line.length() - 2);
-                	clausePointer++;
+                	String[] temp = line.split("\\s+");
+                	int[] i = new int[temp.length-1];
+                	for (int idx = 0; idx < i.length; idx++){
+                		i[idx] = Integer.parseInt(temp[idx]);
+                	}
+                	clauses.add(i);
                 }
-            }   
+            }
             bufferedReader.close();         
         }
         catch (NumberFormatException nfe){
@@ -73,7 +79,10 @@ public class Reader {
 	        String fileName = args[0];
 	        Result r = new Reader(fileName).readFile();
 	        System.out.println(Arrays.toString(r.getVariables()));
-	        System.out.println(Arrays.toString(r.getClauses()));
+	        for(int[] clause: r.getClauses()){
+		        System.out.println(Arrays.toString(clause));
+	        }
+
 		} else {
 			System.out.println("Supply the location of the file. Syntax: solver.jar file");
 			System.exit(1);
