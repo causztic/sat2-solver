@@ -4,15 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-/*
 import static org.junit.Assert.*;
 
-import org.junit.Test;
-*/
 
 import sat.env.*;
 import sat.formula.*;
@@ -25,15 +18,11 @@ public class SATSolverTest {
     Literal na = a.getNegation();
     Literal nb = b.getNegation();
     Literal nc = c.getNegation();
-
-
-
 	
 	// TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
 	public void readFile(String filename){
 		String line = null;
         boolean hasP = false;
-        boolean[] variables = null;
         Clause[] clauses = null;
         int clausePointer = 0;
         try {
@@ -56,7 +45,7 @@ public class SATSolverTest {
                 		hasP = true;
                 		String[] parameters = line.split("\\s+");
                 		if (parameters[1].equals("cnf")){
-                			variables = new boolean[Integer.parseInt(parameters[2])];
+//                			variables = new boolean[Integer.parseInt(parameters[2])];
                 			clauses = new Clause[Integer.parseInt(parameters[3])];
                 		} else {
             	        	bufferedReader.close();
@@ -69,7 +58,15 @@ public class SATSolverTest {
                 	throw new IOException("Invalid file. Duplicate p found");
                 } else {
                 	// if there is p, set the variables
-                	String[] temp = line.substring(0, line.length() - 2).split("\\s+");
+                	String[] temp = line.split("\\s+");
+                	if (!temp[temp.length-1].equals("0")){
+                		bufferedReader.close();
+                		throw new IOException("Invalid format.");
+                	}
+                	if (temp.length > 3){
+                		bufferedReader.close();
+                		throw new IOException("It has more than 2 conditions on a clause. 2-SAT Solver will not be able to solve this.");
+                	}
                 	Literal[] lit = new Literal[temp.length];
                 	for (int i = 0; i < temp.length; i++){
                 		int test = Integer.parseInt(temp[i]);
@@ -91,7 +88,7 @@ public class SATSolverTest {
         	ex.printStackTrace();
         }
         
-        SATSolver.solve(makeFm(clauses));
+        // SATSolver.solve(makeFm(clauses));
 	}
 	
 	public static void main(String[] args){
@@ -99,6 +96,8 @@ public class SATSolverTest {
 	        String fileName = args[0];
 	        SATSolverTest r = new SATSolverTest();
 	        r.readFile(fileName);
+	        r.testSATSolver1();
+	        r.testSATSolver2();
 		} else {
 			System.out.println("Supply the location of the file. Syntax: solver.jar file");
 			System.exit(1);
@@ -108,21 +107,19 @@ public class SATSolverTest {
     public void testSATSolver1(){
     	// (a v b)
     	Environment e = SATSolver.solve(makeFm(makeCl(a,b))	);
-/*
+    	System.out.println(e);	
     	assertTrue( "one of the literals should be set to true",
     			Bool.TRUE == e.get(a.getVariable())  
     			|| Bool.TRUE == e.get(b.getVariable())	);
-    	
-*/    	
     }
     
     
     public void testSATSolver2(){
     	// (~a)
     	Environment e = SATSolver.solve(makeFm(makeCl(na)));
-/*
+    	System.out.println(e);
     	assertEquals( Bool.FALSE, e.get(na.getVariable()));
-*/    	
+   
     }
     
     private static Formula makeFm(Clause... e) {

@@ -1,10 +1,14 @@
 package sat;
 
+import immutable.EmptyImList;
 import immutable.ImList;
+import sat.env.Bool;
 import sat.env.Environment;
 import sat.formula.Clause;
 import sat.formula.Formula;
 import sat.formula.Literal;
+import sat.formula.NegLiteral;
+import sat.formula.PosLiteral;
 
 /**
  * A simple DPLL SAT solver. See http://en.wikipedia.org/wiki/DPLL_algorithm
@@ -20,9 +24,18 @@ public class SATSolver {
      *         null if no such environment exists.
      */
     public static Environment solve(Formula formula) {
-        // TODO: implement this.
-    	System.out.println(formula);
-        throw new RuntimeException("not yet implemented.");
+    	Environment env = new Environment();
+    	
+    	for (Clause clause: formula.getClauses()){
+    		if (clause.isUnit()){
+    			// single clause, set it to be true always.
+    			Literal literal = clause.chooseLiteral();
+    			env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
+    		}
+    			
+    	}
+    	return solve(formula.getClauses(), env);
+        // throw new RuntimeException("not yet implemented.");
     }
 
     /**
@@ -38,7 +51,13 @@ public class SATSolver {
      *         or null if no such environment exists.
      */
     private static Environment solve(ImList<Clause> clauses, Environment env) {
-        // TODO: implement this.
+//    	Literal literal = clauses.first().chooseLiteral();
+//    	clauses = substitute(clauses, literal);
+//    	if (clauses.isEmpty()){
+//    		env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
+//    		return env;
+//    	} else
+//    		return null;
         throw new RuntimeException("not yet implemented.");
     }
 
@@ -54,8 +73,12 @@ public class SATSolver {
      */
     private static ImList<Clause> substitute(ImList<Clause> clauses,
             Literal l) {
-        // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+    	ImList<Clause> c = new EmptyImList<>();
+    	for (Clause clause: clauses){
+    		c.add(clause.reduce(l));
+    	}
+        return c;
+        //throw new RuntimeException("not yet implemented.");
     }
 
 }
