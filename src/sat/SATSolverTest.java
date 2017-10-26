@@ -51,7 +51,7 @@ public class SATSolverTest {
 			if (hasP){
 				sc.useDelimiter(" 0");
 				while (sc.hasNext()){
-					String[] values = sc.next().split(" ");
+					String[] values = sc.next().trim().split(" ");
 //					if (values.length > 2){
 //						throw new IOException("The .cnf file has more than 2 literals in a clause.");
 //					}

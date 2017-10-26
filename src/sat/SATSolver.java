@@ -26,20 +26,19 @@ public class SATSolver {
 	public static Environment solve(Formula formula) {
 		Environment env = new Environment();
 		ImList<Clause> clauses = formula.getClauses();
-		for (Clause clause : clauses) {
+		for (Clause clause: clauses) {
 			if (clause.isUnit()) {
 				// single clause, set it to be true always.
 				Literal literal = clause.chooseLiteral();
-				clauses = substitute(clauses, literal);
+				clauses = substitute(formula.getClauses(), literal);
 				env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
 			}
-
 		}
 		if (clauses.isEmpty()) {
 			System.out.println("Solved without recursion..");
 			return env;
 		} else {
-			return solve(formula.getClauses(), env);
+			return solve(clauses, env);
 		}
 
 	}
@@ -58,6 +57,9 @@ public class SATSolver {
 	 */
 	private static Environment solve(ImList<Clause> clauses, Environment env) {
 		Literal literal = clauses.first().chooseLiteral();
+		System.out.print("Setting variable: ");
+		System.out.print(literal + " ");
+		System.out.println(literal.getVariable());
 		env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
 		clauses = substitute(clauses, literal);
 		if (clauses.isEmpty()) {
@@ -79,14 +81,17 @@ public class SATSolver {
 	 * @return a new list of clauses resulting from setting l to true
 	 */
 	private static ImList<Clause> substitute(ImList<Clause> clauses, Literal l) {
-		Formula f = new Formula();
+		ImList<Clause> c = new EmptyImList<Clause>();
+		System.out.print("Substituing: ");
+		System.out.println(clauses);
 		for (Clause clause : clauses) {
 			clause = clause.reduce(l);
 			if (clause != null && !clause.isEmpty())
-				f = f.addClause(clause);
+				c = c.add(clause);
 		}
-		System.out.println(f.getClauses());
-		return f.getClauses();
+		System.out.print("Substituted to: ");
+		System.out.println(c);
+		return c;
 		// throw new RuntimeException("not yet implemented.");
 	}
 
