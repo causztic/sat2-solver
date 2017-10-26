@@ -51,14 +51,14 @@ public class SATSolver {
      *         or null if no such environment exists.
      */
     private static Environment solve(ImList<Clause> clauses, Environment env) {
-//    	Literal literal = clauses.first().chooseLiteral();
-//    	clauses = substitute(clauses, literal);
-//    	if (clauses.isEmpty()){
-//    		env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
-//    		return env;
-//    	} else
-//    		return null;
-        throw new RuntimeException("not yet implemented.");
+    	Literal literal = clauses.first().chooseLiteral();
+    	clauses = substitute(clauses, literal);
+    	if (clauses.isEmpty()){
+    		env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
+    		return env;
+    	} else
+    		return null;
+        //throw new RuntimeException("not yet implemented.");
     }
 
     /**

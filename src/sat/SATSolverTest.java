@@ -1,9 +1,14 @@
 package sat;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
 import static org.junit.Assert.*;
 
 
@@ -21,73 +26,52 @@ public class SATSolverTest {
 	
 	// TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
 	public void readFile(String filename){
-		String line = null;
-        boolean hasP = false;
-        Clause[] clauses = null;
-        int clausePointer = 0;
-        try {
-            // FileReader reads text files in the default encoding.
-            FileReader fileReader = new FileReader(filename);
-
-            // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            
-            while((line = bufferedReader.readLine()) != null) {
-            	// charAt is faster than startsWith
-            	
-            	// skip comments and empty lines
-                if (line.trim().isEmpty() || line.charAt(0) == 'c')
-                	continue;
-                
-                // if there is no p, set the p parameters
-                if (!hasP){ 
-                	if (line.charAt(0) == 'p'){
-                		hasP = true;
-                		String[] parameters = line.split("\\s+");
-                		if (parameters[1].equals("cnf")){
-//                			variables = new boolean[Integer.parseInt(parameters[2])];
-                			clauses = new Clause[Integer.parseInt(parameters[3])];
-                		} else {
-            	        	bufferedReader.close();
-                			throw new IOException("Invalid CNF file. Problem FORMAT must be CNF.");
-                		}
-                	}
-                } else if (line.charAt(0) == 'p'){
-                	// if there is p, and p happens again
-    	        	bufferedReader.close();
-                	throw new IOException("Invalid file. Duplicate p found");
-                } else {
-                	// if there is p, set the variables
-                	String[] temp = line.split("\\s+");
-                	if (!temp[temp.length-1].equals("0")){
-                		bufferedReader.close();
-                		throw new IOException("Invalid format.");
-                	}
-                	if (temp.length > 3){
-                		bufferedReader.close();
-                		throw new IOException("It has more than 2 conditions on a clause. 2-SAT Solver will not be able to solve this.");
-                	}
-                	Literal[] lit = new Literal[temp.length];
-                	for (int i = 0; i < temp.length; i++){
-                		int test = Integer.parseInt(temp[i]);
-                		lit[i] = test > 0 ? PosLiteral.make(temp[i]) : NegLiteral.make(temp[i].substring(1));
-                	}
-                	clauses[clausePointer] = makeCl(lit);
-                	clausePointer++;
-                }
-            }
-            bufferedReader.close();         
-        }
-        catch (NumberFormatException nfe){
-        	nfe.printStackTrace();
-        }
-        catch(FileNotFoundException ex) {
-        	ex.printStackTrace();
-        }
-        catch(IOException ex) {
-        	ex.printStackTrace();
-        }
-        
+		boolean hasP = false;
+		Clause[] clauses = null;
+		int clausePointer = 0;
+		try {
+			Scanner sc = new Scanner(new File(filename));
+			String input = null;
+			
+			while (sc.hasNextLine()){
+				input = sc.nextLine();
+				// skip if empty or is a comment
+				if (input.isEmpty() || input.charAt(0) == 'c')
+					continue;
+				if (input.charAt(0) == 'p'){
+					String[] temp = input.split(" ");
+					clauses = new Clause[Integer.parseInt(temp[temp.length - 1])];
+					// ignore P because it is not used in the solver..
+					hasP = true;
+					break;
+				}
+					
+			}
+			
+			if (hasP){
+				sc.useDelimiter(" 0");
+				while (sc.hasNext()){
+					String[] values = sc.next().split(" ");
+//					if (values.length > 2){
+//						throw new IOException("The .cnf file has more than 2 literals in a clause.");
+//					}
+					Literal[] literals = new Literal[values.length];
+					for (int i = 0; i < literals.length; i++){
+						String temp = values[i].trim();
+						literals[i] = temp.charAt(0) == '-' ? NegLiteral.make(temp.substring(1)) : PosLiteral.make(temp);
+					}
+					clauses[clausePointer] = makeCl(literals);
+					System.out.println(clauses[clausePointer]);
+					clausePointer++;
+				}
+			} else {
+				throw new IOException("invalid format for CNF. no P found.");
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e){
+			e.printStackTrace();
+		}
         // SATSolver.solve(makeFm(clauses));
 	}
 	
