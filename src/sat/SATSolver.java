@@ -62,6 +62,7 @@ public class SATSolver {
 		ImList<Clause> newClauses = substitute(clauses, literal);
 		if (newClauses == null){
 			// go back up
+			System.out.println("Doesnt work, setting negation..");
 			literal = clauses.first().chooseLiteral().getNegation();
 			return solve(substitute(clauses, literal), env);
 		}
@@ -88,17 +89,20 @@ public class SATSolver {
 		ImList<Clause> c = new EmptyImList<Clause>();
 		System.out.print("Substituing: ");
 		System.out.println(clauses);
+		
 		ImList<Literal> literalList = new EmptyImList<Literal>();
+		
 		for (Clause clause : clauses) {
 			Clause temp = clause.reduce(l);
-
+		
+			
 			if (temp != null) {
 				if (temp.isUnit()){
+					literalList = literalList.add(temp.chooseLiteral());
 					for (Literal literal: literalList){
-						if (literal.negates(temp.chooseLiteral()))
+						if (literal.negates(temp.chooseLiteral())){
 							return null;
-						else
-							literalList = literalList.add(temp.chooseLiteral());
+						}
 					}
 				}
 				if (temp.isEmpty()){
