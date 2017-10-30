@@ -43,16 +43,21 @@ public class SATSolver {
         if (clauses.isEmpty())
             return env;
 
-        int minSize = Integer.MAX_VALUE;
-        Clause minClause = new Clause();
+        Clause minClause = null;
+        
+        
         for (Clause c : clauses) {
-            if (c.size() < minSize) {
-                minSize = c.size();
+            if (c.size() == 1) {
+            	// if it is 1, break immediately.
                 minClause = c;
+                break;
             }
             if (c.isEmpty()) // an empty clause is an unsolvable clause
                 return null;
         }
+        
+        if (minClause == null)
+        	minClause = clauses.first();
 
         Literal l = minClause.chooseLiteral();
         if (minClause.isUnit()) {
@@ -114,7 +119,7 @@ public class SATSolver {
         for (Clause c : clauses) {
             Clause temp = c.reduce(l);
             if (temp != null) {
-                result = result.add(c.reduce(l));
+                result = result.add(temp);
             }
         }
         return result;
