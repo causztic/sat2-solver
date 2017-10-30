@@ -57,31 +57,42 @@ public class SATSolver {
         Literal l = minClause.chooseLiteral();
         if (minClause.isUnit()) {
         	// if minimum size is 1, use it and recursively solve.
-      	   Variable var = l.getVariable();
-      	   Literal newLiteral = PosLiteral.make(var);
-      	   if (newLiteral.negates(l)) {
-      		   Environment newEnv = env.putFalse(var);
-      		   ImList<Clause> newClauses = substitute(clauses,l);
-      		   return solve(newClauses, newEnv);
+        	Environment newEnv = null;
+        	ImList<Clause> newClauses = new EmptyImList<Clause>();
+      	   if (l instanceof PosLiteral) {
+      		   newEnv = env.putTrue(l.getVariable());
+      		   newClauses = substitute(clauses,l);
       	   } else {
-      		   Environment newEnv = env.putTrue(var);
-      		   ImList<Clause> newClauses = substitute(clauses,l);
-      		   return solve(newClauses, newEnv);
+      		   newEnv = env.putFalse(l.getVariable());
+      		   newClauses = substitute(clauses,l);
       	   }
+  		   return solve(newClauses, newEnv);
         } else {
       	   // If minimum sized clause has size greater than 1, choose an arbitrary literal; assign it to true and then recurse
       	   
       	   Literal literal = minClause.chooseLiteral();
       	   Variable var = literal.getVariable();
-      	   Environment newEnv = env.putTrue(var);
-      	   Literal posLiteral = PosLiteral.make(var);
-      	   ImList<Clause> newClauses = substitute(clauses, posLiteral);
+      	   Environment newEnv = null;
+      	   
+      	   if (literal instanceof PosLiteral){
+      		   newEnv = env.putTrue(var);
+      	   } else {
+      		   newEnv = env.putFalse(var);
+      	   }
+      	   
+      	   ImList<Clause> newClauses = substitute(clauses, literal);
       	   Environment solution = solve(newClauses, newEnv);
       	   if (solution == null) {
       		   // If solution fails, back propagate
-      		   newEnv = env.putFalse(var);
-      		   Literal negLiteral = NegLiteral.make(var);
-      		   newClauses = substitute(clauses, negLiteral);
+      		   literal = literal.getNegation();
+      		   
+          	   if (literal instanceof PosLiteral){
+          		   newEnv = env.putTrue(var);
+          	   } else {
+          		   newEnv = env.putFalse(var);
+          	   }
+          	   
+      		   newClauses = substitute(clauses, literal);
       		   return solve(newClauses, newEnv);
       	   }
       	   return solution;
