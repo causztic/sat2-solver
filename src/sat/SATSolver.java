@@ -2,8 +2,8 @@ package sat;
 
 import immutable.EmptyImList;
 import immutable.ImList;
-import sat.env.Bool;
 import sat.env.Environment;
+import sat.env.Variable;
 import sat.formula.Clause;
 import sat.formula.Formula;
 import sat.formula.Literal;
@@ -24,23 +24,7 @@ public class SATSolver {
 	 *         null if no such environment exists.
 	 */
 	public static Environment solve(Formula formula) {
-		Environment env = new Environment();
-		ImList<Clause> clauses = formula.getClauses();
-		for (Clause clause: clauses) {
-			if (clause.isUnit()) {
-				// single clause, set it to be true always.
-				Literal literal = clause.chooseLiteral();
-				clauses = substitute(formula.getClauses(), literal);
-				env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
-			}
-		}
-		if (clauses.isEmpty()) {
-			System.out.println("Solved without recursion..");
-			return env;
-		} else {
-			return solve(clauses, env);
-		}
-
+		return solve(formula.getClauses(), new Environment());
 	}
 
 	/**
@@ -56,23 +40,52 @@ public class SATSolver {
 	 *         or null if no such environment exists.
 	 */
 	private static Environment solve(ImList<Clause> clauses, Environment env) {
-		Literal literal = clauses.first().chooseLiteral();
-		System.out.println("Setting variable: " + literal);
-		env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
-		ImList<Clause> newClauses = substitute(clauses, literal);
-		if (newClauses == null){
-			// go back up
-			System.out.println("Doesnt work, setting negation..");
-			literal = clauses.first().chooseLiteral().getNegation();
-			return solve(substitute(clauses, literal), env);
-		}
-		
-		if (newClauses.isEmpty()) {
-			return env;
-		} else {
-			return solve(newClauses, env);
-		}
-		// throw new RuntimeException("not yet implemented.");
+        if (clauses.isEmpty())
+            return env;
+
+        int minSize = Integer.MAX_VALUE;
+        Clause minClause = new Clause();
+        for (Clause c : clauses) {
+            if (c.size() < minSize) {
+                minSize = c.size();
+                minClause = c;
+            }
+            if (c.isEmpty()) // an empty clause is an unsolvable clause
+                return null;
+        }
+
+        Literal l = minClause.chooseLiteral();
+        if (minClause.isUnit()) {
+        	// if minimum size is 1, use it and recursively solve.
+      	   Variable var = l.getVariable();
+      	   Literal newLiteral = PosLiteral.make(var);
+      	   if (newLiteral.negates(l)) {
+      		   Environment newEnv = env.putFalse(var);
+      		   ImList<Clause> newClauses = substitute(clauses,l);
+      		   return solve(newClauses, newEnv);
+      	   } else {
+      		   Environment newEnv = env.putTrue(var);
+      		   ImList<Clause> newClauses = substitute(clauses,l);
+      		   return solve(newClauses, newEnv);
+      	   }
+        } else {
+      	   // If minimum sized clause has size greater than 1, choose an arbitrary literal; assign it to true and then recurse
+      	   
+      	   Literal literal = minClause.chooseLiteral();
+      	   Variable var = literal.getVariable();
+      	   Environment newEnv = env.putTrue(var);
+      	   Literal posLiteral = PosLiteral.make(var);
+      	   ImList<Clause> newClauses = substitute(clauses, posLiteral);
+      	   Environment solution = solve(newClauses, newEnv);
+      	   if (solution == null) {
+      		   // If solution fails, back propagate
+      		   newEnv = env.putFalse(var);
+      		   Literal negLiteral = NegLiteral.make(var);
+      		   newClauses = substitute(clauses, negLiteral);
+      		   return solve(newClauses, newEnv);
+      	   }
+      	   return solution;
+        }
 	}
 
 	/**
@@ -86,34 +99,14 @@ public class SATSolver {
 	 * @return a new list of clauses resulting from setting l to true
 	 */
 	private static ImList<Clause> substitute(ImList<Clause> clauses, Literal l) {
-		ImList<Clause> c = new EmptyImList<Clause>();
-		System.out.print("Substituing: ");
-		System.out.println(clauses);
-		
-		ImList<Literal> literalList = new EmptyImList<Literal>();
-		
-		for (Clause clause : clauses) {
-			Clause temp = clause.reduce(l);
-		
-			
-			if (temp != null) {
-				if (temp.isUnit()){
-					literalList = literalList.add(temp.chooseLiteral());
-					for (Literal literal: literalList){
-						if (literal.negates(temp.chooseLiteral())){
-							return null;
-						}
-					}
-				}
-				if (temp.isEmpty()){
-					return null;
-				}
-				c = c.add(temp);
-			}
-		}
-		System.out.print("Substituted to: ");
-		System.out.println(c);
-		return c;
+        ImList<Clause> result = new EmptyImList<Clause>();
+        for (Clause c : clauses) {
+            Clause temp = c.reduce(l);
+            if (temp != null) {
+                result = result.add(c.reduce(l));
+            }
+        }
+        return result;
 		// throw new RuntimeException("not yet implemented.");
 	}
 
