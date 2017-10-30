@@ -57,15 +57,19 @@ public class SATSolver {
 	 */
 	private static Environment solve(ImList<Clause> clauses, Environment env) {
 		Literal literal = clauses.first().chooseLiteral();
-		System.out.print("Setting variable: ");
-		System.out.print(literal + " ");
-		System.out.println(literal.getVariable());
+		System.out.println("Setting variable: " + literal);
 		env = env.put(literal.getVariable(), literal.getClass() == PosLiteral.class ? Bool.TRUE : Bool.FALSE);
-		clauses = substitute(clauses, literal);
-		if (clauses.isEmpty()) {
+		ImList<Clause> newClauses = substitute(clauses, literal);
+		if (newClauses == null){
+			// go back up
+			literal = clauses.first().chooseLiteral().getNegation();
+			return solve(substitute(clauses, literal), env);
+		}
+		
+		if (newClauses.isEmpty()) {
 			return env;
 		} else {
-			return solve(clauses, env);
+			return solve(newClauses, env);
 		}
 		// throw new RuntimeException("not yet implemented.");
 	}
@@ -84,12 +88,23 @@ public class SATSolver {
 		ImList<Clause> c = new EmptyImList<Clause>();
 		System.out.print("Substituing: ");
 		System.out.println(clauses);
+		ImList<Literal> literalList = new EmptyImList<Literal>();
 		for (Clause clause : clauses) {
 			Clause temp = clause.reduce(l);
+
 			if (temp != null) {
+				if (temp.isUnit()){
+					for (Literal literal: literalList){
+						if (literal.negates(temp.chooseLiteral()))
+							return null;
+						else
+							literalList = literalList.add(temp.chooseLiteral());
+					}
+				}
+				if (temp.isEmpty()){
+					return null;
+				}
 				c = c.add(temp);
-				if (temp.isEmpty())
-					return clauses;
 			}
 		}
 		System.out.print("Substituted to: ");
