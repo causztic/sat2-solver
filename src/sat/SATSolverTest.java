@@ -41,7 +41,6 @@ public class SATSolverTest {
 				if (input.charAt(0) == 'p'){
 					String[] temp = input.split(" ");
 					clauses = new Clause[Integer.parseInt(temp[temp.length - 1])];
-					// ignore P because it is not used in the solver..
 					hasP = true;
 					break;
 				}
@@ -82,7 +81,17 @@ public class SATSolverTest {
 	        String fileName = args[0];
 	        SATSolverTest r = new SATSolverTest();
 	        Formula f = r.readFile(fileName);
-	        System.out.println(SATSolver.solve(f));
+			System.out.println("SAT solver starts!!!");
+			long started = System.nanoTime(); 
+			Environment e = SATSolver.solve(f);
+			long time = System.nanoTime();
+			long timeTaken= time - started;
+			System.out.println("Time:" + timeTaken/1000000.0 + "ms");
+			if (e == null){
+				System.out.println("UNSATISFIABLE.");
+				
+			} else 
+				System.out.println(e);
 //	        r.testSATSolver1();
 //	        r.testSATSolver2();
 		} else {
