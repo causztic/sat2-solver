@@ -1,19 +1,20 @@
 package sat;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
+
+import sat.env.Variable;
 import sat.formula.*;
 
 public class Graph {
 
 	private HashMap<Literal, LinkedList<Literal>> vertices = new HashMap<>();
-	private ArrayList<Literal> results = new ArrayList<>();
+	private HashMap<Variable, Boolean> environment = new HashMap<>();
 	
-	ArrayList<Literal> getResults(){
-		return results;
+	HashMap<Variable, Boolean> getEnvironment(){
+		return environment;
 	}
 	void addEdge(Literal v, Literal w){
 		// link the literal v to the literal w.
@@ -60,7 +61,12 @@ public class Graph {
 				topologicalSortUtil(key, visited, stack);
 		}
 		
-		while (!stack.isEmpty())
-			results.add(stack.pop());	
+		while (!stack.isEmpty()){
+			Literal literal = stack.pop();
+			Variable v = literal.getVariable();
+			if (environment.get(v) == null && environment.get(literal.getNegation().getVariable()) == null)
+				environment.put(v, !(literal instanceof PosLiteral));
+			//results.add(stack.pop());		
+		}
 	}
 }
