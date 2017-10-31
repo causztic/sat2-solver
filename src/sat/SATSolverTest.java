@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import static org.junit.Assert.*;
@@ -23,12 +24,14 @@ public class SATSolverTest {
     Literal na = a.getNegation();
     Literal nb = b.getNegation();
     Literal nc = c.getNegation();
+	static Graph g = new Graph();
 	
 	// TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
 	public Formula readFile(String filename){
 		boolean hasP = false;
 		Clause[] clauses = null;
 		int clausePointer = 0;
+
 		try {
 			Scanner sc = new Scanner(new File(filename));
 			String input = null;
@@ -62,6 +65,11 @@ public class SATSolverTest {
 					}
 					clauses[clausePointer] = makeCl(literals);
 //					System.out.println(clauses[clausePointer]);
+					Iterator<Literal> it;
+					it = clauses[clausePointer].iterator();
+					if (it.hasNext()){
+						g.addEdge(it.next().getNegation(), it.hasNext() ? it.next() : null);
+					}
 					clausePointer--;
 				}
 				sc.close();
@@ -82,6 +90,10 @@ public class SATSolverTest {
 	        String fileName = args[0];
 	        SATSolverTest r = new SATSolverTest();
 	        Formula f = r.readFile(fileName);
+
+			System.out.println("Following is a Topological " + "sort of the given graph");
+			g.topologicalSort();
+			
 			System.out.println("SAT solver starts!!!");
 			long started = System.nanoTime(); 
 			Environment e = SATSolver.solve(f);
