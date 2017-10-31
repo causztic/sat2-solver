@@ -68,7 +68,11 @@ public class SATSolverTest {
 					Iterator<Literal> it;
 					it = clauses[clausePointer].iterator();
 					if (it.hasNext()){
-						g.addEdge(it.next().getNegation(), it.hasNext() ? it.next() : null);
+						Literal firstItem = it.next();
+						Literal secondItem = it.hasNext() ? it.next() : null;
+						g.addEdge(firstItem.getNegation(), secondItem);
+						if (secondItem != null)
+							g.addEdge(secondItem.getNegation(), firstItem);
 					}
 					clausePointer--;
 				}
