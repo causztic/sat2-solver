@@ -65,6 +65,8 @@ public class SATSolverTest {
 					
 					if (literals[0] != null){
 						clauses[clausePointer] = makeCl(literals);
+						if (clauses[clausePointer] == null)
+							throw new IOException("UNSATISFIABLE");
 						
 						// based on the current clause, construct the directed graph.
 						Iterator<Literal> it;
@@ -119,10 +121,10 @@ public class SATSolverTest {
 			long time = System.nanoTime();
 			long timeTaken= time - started;
 			System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
-//			if (e == null){
-//				System.out.println("UNSATISFIABLE.");
-//			} else 
-//				System.out.println(e);
+			if (e == null){
+				System.out.println("UNSATISFIABLE.");
+			} else 
+				System.out.println(e);
 //	        r.testSATSolver1();
 //	        r.testSATSolver2();
 		} else {
