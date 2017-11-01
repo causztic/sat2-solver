@@ -3,6 +3,7 @@ package sat;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -50,28 +51,35 @@ public class SATSolverTest {
 			if (hasP){
 				sc.useDelimiter(" 0");
 				while (sc.hasNext()){
-					String[] values = sc.next().trim().split(" ");
+					String next = sc.next();
+					String[] values = next.trim().split(" ");
 //					if (values.length > 2){
 //						throw new IOException("The .cnf file has more than 2 literals in a clause.");
 //					}
 					Literal[] literals = new Literal[values.length];
 					for (int i = 0; i < literals.length; i++){
 						String temp = values[i].trim();
-						literals[i] = temp.charAt(0) == '-' ? NegLiteral.make(temp.substring(1)) : PosLiteral.make(temp);
+						if (temp.length() > 0)
+							literals[i] = temp.charAt(0) == '-' ? NegLiteral.make(temp.substring(1)) : PosLiteral.make(temp);
 					}
-					clauses[clausePointer] = makeCl(literals);
 					
-					// based on the current clause, construct the directed graph.
-					Iterator<Literal> it;
-					it = clauses[clausePointer].iterator();
-					if (it.hasNext()){
-						Literal firstItem = it.next();
-						Literal secondItem = it.hasNext() ? it.next() : firstItem;
-						g.addEdge(firstItem.getNegation(), secondItem);
-						if (secondItem != null)
-							g.addEdge(secondItem.getNegation(), firstItem);
+					if (literals[0] != null){
+						clauses[clausePointer] = makeCl(literals);
+						
+						// based on the current clause, construct the directed graph.
+						Iterator<Literal> it;
+						it = clauses[clausePointer].iterator();
+						if (it.hasNext()){
+							Literal firstItem = it.next();
+							Literal secondItem = it.hasNext() ? it.next() : firstItem;
+							g.addEdge(firstItem.getNegation(), secondItem);
+							if (secondItem != null)
+								g.addEdge(secondItem.getNegation(), firstItem);
+						}
+						clausePointer--;
 					}
-					clausePointer--;
+					
+
 				}
 				sc.close();
 			} else {
