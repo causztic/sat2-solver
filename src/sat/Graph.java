@@ -91,8 +91,10 @@ public class Graph {
 				//System.out.print(popped + " ");
 				assignedComponents.add(popped);
 			} while(popped != key);
-			if (component.contains(popped.getNegation()))
-				throw new Exception("UNSATISFIABLE.");
+			for (Literal c: component){
+				if (component.contains(c.getNegation()))
+					throw new Exception("UNSATISFIABLE.");
+			}
 			//System.out.println();
 			// Pop v from P.
 			P.pop();
