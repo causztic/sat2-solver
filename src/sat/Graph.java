@@ -87,9 +87,9 @@ public class Graph {
 				// if it is already inside, return with an error as the boolean
 				// equation is not satisfiable.
 				popped = S.pop();
-				component.add(popped.getVariable());
 				if (component.contains(popped.getVariable()))
 					throw new Exception("UNSATISFIABLE.");
+				component.add(popped.getVariable());
 				//System.out.print(popped + " ");
 				assignedComponents.add(popped);
 			} while(popped != key);
