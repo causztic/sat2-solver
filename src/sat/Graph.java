@@ -80,19 +80,19 @@ public class Graph {
 		if (key.equals(P.peek())){
 			// Pop vertices from S until v has been popped, 
 			// and assign the popped vertices to a new component.
-			Set<Variable> component = new HashSet<>();
+			Set<Literal> component = new HashSet<>();
 			Literal popped = null;
 			do {
 				// while adding, systematically check if the variable is inside.
 				// if it is already inside, return with an error as the boolean
 				// equation is not satisfiable.
 				popped = S.pop();
-				if (component.contains(popped.getVariable()))
-					throw new Exception("UNSATISFIABLE.");
-				component.add(popped.getVariable());
+				component.add(popped);
 				//System.out.print(popped + " ");
 				assignedComponents.add(popped);
 			} while(popped != key);
+			if (component.contains(popped.getNegation()))
+				throw new Exception("UNSATISFIABLE.");
 			//System.out.println();
 			// Pop v from P.
 			P.pop();
