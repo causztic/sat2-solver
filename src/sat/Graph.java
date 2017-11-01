@@ -1,12 +1,17 @@
 package sat;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Stack;
+import java.util.*;
 
 import sat.env.Variable;
 import sat.formula.*;
+
+/*
+ * Creates a directed graph, topologically sorted with DFS.
+ * 
+ * Runtime complexity: O(V+E), V = vertices, E = edges
+ * Space complexity: O(V)
+ * 
+ */
 
 public class Graph {
 
