@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 import static org.junit.Assert.*;
@@ -95,25 +94,27 @@ public class SATSolverTest {
 
 			System.out.println("SAT solver with topological sort starts!!!");
 			long started = System.nanoTime(); 
-			g.topologicalSort();
-			//Environment env = new Environment();
-			//System.out.println("Environment:[");
-			long time = System.nanoTime();
-			long timeTaken= time - started;
-			System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
-			System.out.println(g.getEnvironment());
-//
-//			
+			try {
+				g.topologicalSort();
+			} catch(Exception e){
+				System.out.println(e);
+			} finally {
+				long time = System.nanoTime();
+				long timeTaken= time - started;
+				System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
+				System.out.println(g.getEnvironment());
+			}
+	
 			System.out.println("SAT solver starts!!!");
 			started = System.nanoTime(); 
 			Environment e = SATSolver.solve(f);
-			time = System.nanoTime();
-			timeTaken= time - started;
+			long time = System.nanoTime();
+			long timeTaken= time - started;
 			System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
-//			if (e == null){
-//				System.out.println("UNSATISFIABLE.");
-//			} else 
-//				System.out.println(e);
+			if (e == null){
+				System.out.println("UNSATISFIABLE.");
+			} else 
+				System.out.println(e);
 //	        r.testSATSolver1();
 //	        r.testSATSolver2();
 		} else {
