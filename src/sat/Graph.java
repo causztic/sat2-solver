@@ -87,14 +87,13 @@ public class Graph {
 				// if it is already inside, return with an error as the boolean
 				// equation is not satisfiable.
 				popped = S.pop();
+				if (component.contains(popped.getNegation()))
+					throw new Exception("UNSATISFIABLE.");
+				
 				component.add(popped);
 				//System.out.print(popped + " ");
 				assignedComponents.add(popped);
 			} while(popped != key);
-			for (Literal c: component){
-				if (component.contains(c.getNegation()))
-					throw new Exception("UNSATISFIABLE.");
-			}
 			//System.out.println();
 			// Pop v from P.
 			P.pop();
