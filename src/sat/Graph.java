@@ -44,30 +44,29 @@ public class Graph {
 		edges.add(w);
 		vertices.put(v, edges);
 	}
-	
 
-	public void topologicalSort(Literal l, Stack<Literal> stack) throws Exception{
+	public void topologicalSort(Literal key, HashMap<Literal, Boolean> visited, Stack<Literal> stack) throws Exception{
 		// mark the node as visited.
-		//visited.put(l, true);
+		visited.put(key, true);
 		// set preorder number and increment
-		preOrderNumbers.put(l, C++);
+		preOrderNumbers.put(key, C++);
 		// push l into S and P
-		S.push(l);
-		P.push(l);
+		S.push(key);
+		P.push(key);
 		
 		Literal adjacentLiteral;
 		
 		// Recur for all the vertices adjacent to this vertex.
-		if (vertices.get(l) != null){
+		if (vertices.get(key) != null){
 			// it has 2 units
-			Iterator<Literal> it = vertices.get(l).iterator();
+			Iterator<Literal> it = vertices.get(key).iterator();
 			// If the preorder number of the adjacents has not yet been assigned, recursively search;
 			while (it.hasNext()){
 				adjacentLiteral = it.next();
-				if (!preOrderNumbers.containsKey(adjacentLiteral)){
-					//Boolean isVisited = visited.get(adjacentLiteral);
-					//if (isVisited == null || !isVisited)
-					topologicalSort(adjacentLiteral, stack);	
+				Boolean isVisited = visited.get(adjacentLiteral);
+				if (!preOrderNumbers.containsKey(adjacentLiteral) && (isVisited == null || !isVisited)){
+					// if it not visited and doesn't contain a key
+					topologicalSort(adjacentLiteral, visited, stack);	
 				} else if (!assignedComponents.contains(adjacentLiteral)){
 					// if w has not yet been assigned to a strongly connected component
 					while (preOrderNumbers.get(P.peek()) > preOrderNumbers.get(adjacentLiteral)){
@@ -78,7 +77,7 @@ public class Graph {
 				}
 			}
 		}
-		if (l.equals(P.peek())){
+		if (key.equals(P.peek())){
 			// Pop vertices from S until v has been popped, 
 			// and assign the popped vertices to a new component.
 			Set<Variable> component = new HashSet<>();
@@ -89,15 +88,14 @@ public class Graph {
 				// equation is not satisfiable.
 				popped = S.pop();
 				if (component.contains(popped.getVariable()))
-					throw new Exception("Unsatisfiable.");
+					throw new Exception("UNSATISFIABLE.");
 				component.add(popped.getVariable());
 				assignedComponents.add(popped);
-			} while(popped != l);
+			} while(popped != key);
 			// Pop v from P.
 			P.pop();
 		}
-		// Push current vertex to stack which stores result
-		stack.push(l);
+		stack.push(key);
 	}
 
 	/*
@@ -105,15 +103,15 @@ public class Graph {
 	 */
 	public void topologicalSort() throws Exception{
 		Stack<Literal> stack = new Stack<>();
-		//HashMap<Literal, Boolean> visited = new HashMap<>();
+		HashMap<Literal, Boolean> visited = new HashMap<>();
 		// Call the recursive helper function to store
 		// Topological Sort starting from all vertices
 		// one by one
 		for (Literal key: vertices.keySet()){
-			//Boolean isVisited = visited.get(key);
-			topologicalSort(key, stack);
-			//if (isVisited == null || !isVisited)
-			//	topologicalSortUtil(key, visited, stack);
+			Boolean isVisited = visited.get(key);
+			if (isVisited == null || !isVisited){
+				topologicalSort(key, visited, stack);
+			}
 		}
 		
 		while (!stack.isEmpty()){
@@ -121,7 +119,6 @@ public class Graph {
 			Variable v = literal.getVariable();
 			if (environment.get(v) == null && environment.get(literal.getNegation().getVariable()) == null)
 				environment.put(v, !(literal instanceof PosLiteral));
-			//results.add(stack.pop());		
 		}
 	}
 }
