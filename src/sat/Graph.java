@@ -51,7 +51,7 @@ public class Graph {
 		//visited.put(l, true);
 		// set preorder number and increment
 		preOrderNumbers.put(l, C++);
-		// push v into S and P
+		// push l into S and P
 		S.push(l);
 		P.push(l);
 		
@@ -61,7 +61,7 @@ public class Graph {
 		if (vertices.get(l) != null){
 			// it has 2 units
 			Iterator<Literal> it = vertices.get(l).iterator();
-			// If the preorder number of w has not yet been assigned, recursively search w;
+			// If the preorder number of the adjacents has not yet been assigned, recursively search;
 			while (it.hasNext()){
 				adjacentLiteral = it.next();
 				if (!preOrderNumbers.containsKey(adjacentLiteral)){
@@ -72,7 +72,7 @@ public class Graph {
 					// if w has not yet been assigned to a strongly connected component
 					while (preOrderNumbers.get(P.peek()) > preOrderNumbers.get(adjacentLiteral)){
 						// Repeatedly pop vertices from P until the top element of P 
-						// has a preorder number less than or equal to the preorder number of w.
+						// has a preorder number less than or equal to the preorder number of adjacent.
 						P.pop();
 					}
 				}
