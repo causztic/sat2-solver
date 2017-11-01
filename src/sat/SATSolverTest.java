@@ -110,10 +110,10 @@ public class SATSolverTest {
 			time = System.nanoTime();
 			timeTaken= time - started;
 			System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
-//			if (e == null){
-//				System.out.println("UNSATISFIABLE.");
-//			} else 
-//				System.out.println(e);
+			if (e == null){
+				System.out.println("UNSATISFIABLE.");
+			} else 
+				System.out.println(e);
 //	        r.testSATSolver1();
 //	        r.testSATSolver2();
 		} else {
