@@ -88,7 +88,7 @@ public class Graph {
 				// equation is not satisfiable.
 				popped = S.pop();
 				if (component.contains(popped.getVariable()))
-					throw new Exception("UNSATISFIABLE.");
+					throw new Exception("FORMULA UNSATISFIABLE.");
 				component.add(popped.getVariable());
 				assignedComponents.add(popped);
 			} while(popped != key);
