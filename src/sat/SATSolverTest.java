@@ -41,6 +41,11 @@ public class SATSolverTest {
 			System.out.println(e);
 	}
 	
+	/*
+	 * Main method for the SAT Solver Test.
+	 * @param	arg[0]	the file name relative to the directory	
+	 * @param	arg[1]	set to "dangerous" (no quotes) to run the sat solver without satisfiability check if it is 2SAT.
+	 */
 	public static void main(String[] args){
 		if (args.length > 0){
 	        String fileName = args[0];
