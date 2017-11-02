@@ -75,6 +75,7 @@ public class FormulaReader {
 					
 					if (literals[0] != null){
 						clauses[clausePointer] = makeCl(literals);
+						// if there is a negation of itself in the same clause
 						if (clauses[clausePointer] == null)
 							throw new IOException("UNSATISFIABLE");
 						
