@@ -91,7 +91,6 @@ public class Graph {
 					throw new Exception("UNSATISFIABLE.");
 				
 				component.add(popped);
-				//System.out.print(popped + " ");
 				assignedComponents.add(popped);
 			} while(popped != key);
 			//System.out.println();

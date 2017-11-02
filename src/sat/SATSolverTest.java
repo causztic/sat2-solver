@@ -28,9 +28,10 @@ public class SATSolverTest {
 		boolean hasP = false;
 		Clause[] clauses = null;
 		int clausePointer = 0;
+		Scanner sc = null;
 
 		try {
-			Scanner sc = new Scanner(new File(filename));
+			sc = new Scanner(new File(filename));
 			String input = null;
 			
 			while (sc.hasNextLine()){
@@ -75,23 +76,22 @@ public class SATSolverTest {
 							Literal firstItem = it.next();
 							Literal secondItem = it.hasNext() ? it.next() : firstItem;
 							g.addEdge(firstItem.getNegation(), secondItem);
-							if (secondItem != null)
-								g.addEdge(secondItem.getNegation(), firstItem);
+							g.addEdge(secondItem.getNegation(), firstItem);
 						}
 						clausePointer--;
 					}
 					
 
 				}
-				sc.close();
 			} else {
-				sc.close();
 				throw new IOException("invalid format for CNF. no P found.");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e){
 			e.printStackTrace();
+		} finally {
+			sc.close();
 		}
 		return makeFm(clauses);
 	}
