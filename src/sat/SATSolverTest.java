@@ -54,9 +54,9 @@ public class SATSolverTest {
 				while (sc.hasNext()){
 					String next = sc.next();
 					String[] values = next.trim().split(" ");
-//					if (values.length > 2){
-//						throw new IOException("The .cnf file has more than 2 literals in a clause.");
-//					}
+					if (values.length > 2){
+						throw new IOException("The .cnf file has more than 2 literals in a clause.");
+					}
 					Literal[] literals = new Literal[values.length];
 					for (int i = 0; i < literals.length; i++){
 						String temp = values[i].trim();
