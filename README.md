@@ -6,11 +6,11 @@
 ## SAT-Solver
 solver in java. takes in CNF format.
 Uses a Path finding SCC algorithm for satisfiability checking, and Graphing with DFS for 2SAT problems.
-Fallbacks to DPLL if the input CNF file describes other SAT problems.
+Fallbacks to DPLL if the input CNF file is not a 2SAT problem.
 
 Test files are in the test_files folder.
 
-1. Set your run configurations with the test_files you want to run with.
+1. Set your run configurations with the test file you want to run with as args[0].
 2. Increase your stack size if the .CNF file is big (a few hundred clauses), under VM arguments. (-Xss16M)
 3. If you are sure the 2SAT problem is satisfiable, set **dangerous** for args[1].
    This will skip satisfiability checking for a faster speed.
