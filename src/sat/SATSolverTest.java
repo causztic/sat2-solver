@@ -15,7 +15,7 @@ public class SATSolverTest {
 	
 	public void testTopological(FormulaReader reader, Boolean dangerous){
 		Graph graph = reader.getGraph();
-		System.out.println("SAT solver with topological sorting");
+		System.out.println("Solving with magic..");
 		long started = System.nanoTime(); 
 		try {
 			graph.topologicalSort(dangerous);
@@ -29,7 +29,7 @@ public class SATSolverTest {
 		}
 	}
 	public void testDPLL(Formula f){
-		System.out.println("SAT solver starts!!!");
+		System.out.println("Solving with DPLL..");
 		long started = System.nanoTime(); 
 		Environment e = SATSolver.solve(f);
 		long time = System.nanoTime();
