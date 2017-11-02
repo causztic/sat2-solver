@@ -13,12 +13,12 @@ public class SATSolverTest {
     Literal nc = c.getNegation();
 
 	
-	public void testTopological(FormulaReader reader){
+	public void testTopological(FormulaReader reader, Boolean dangerous){
 		Graph graph = reader.getGraph();
 		System.out.println("SAT solver with topological sorting");
 		long started = System.nanoTime(); 
 		try {
-			graph.topologicalSort();
+			graph.topologicalSort(dangerous);
 		} catch(Exception e){
 			System.out.println(e);
 		} finally {
@@ -48,7 +48,10 @@ public class SATSolverTest {
 	        FormulaReader reader = new FormulaReader();
 	        Formula f = reader.readFile(fileName);
 	        if (reader.is2SAT()){
-	        	r.testTopological(reader);
+	        	boolean dangerous = false;
+	        	if (args.length >= 2 && args[1].equals("dangerous"))
+	        		dangerous = true;
+	        	r.testTopological(reader, dangerous);
 	        } else {
 	        	r.testDPLL(f);
 	        }

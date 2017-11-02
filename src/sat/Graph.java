@@ -28,6 +28,7 @@ public class Graph {
 	// different strongly connected components from each other. 
 	private Stack<Literal> P = new Stack<>();
 	private HashMap<Literal, Integer> preOrderNumbers = new HashMap<>();
+	private boolean dangerous = false;
 	
 	// returns the environment.
 	HashMap<Variable, Boolean> getEnvironment(){
@@ -51,8 +52,10 @@ public class Graph {
 		// set preorder number and increment
 		preOrderNumbers.put(key, C++);
 		// push l into S and P
-		S.push(key);
-		P.push(key);
+		if (!dangerous){
+			S.push(key);
+			P.push(key);
+		}
 		
 		Literal adjacentLiteral;
 		
@@ -64,20 +67,25 @@ public class Graph {
 			while (it.hasNext()){
 				adjacentLiteral = it.next();
 				Boolean isVisited = visited.get(adjacentLiteral);
-				if (!preOrderNumbers.containsKey(adjacentLiteral) && (isVisited == null || !isVisited)){
-					// if it not visited and doesn't contain a key
-					topologicalSort(adjacentLiteral, visited, stack);	
-				} else if (!assignedComponents.contains(adjacentLiteral)){
-					// if w has not yet been assigned to a strongly connected component
-					while (preOrderNumbers.get(P.peek()) > preOrderNumbers.get(adjacentLiteral)){
-						// Repeatedly pop vertices from P until the top element of P 
-						// has a preorder number less than or equal to the preorder number of adjacent.
-						P.pop();
+				if (dangerous){
+					if (isVisited == null || !isVisited)
+						topologicalSort(adjacentLiteral, visited, stack);
+				} else {
+					if (!preOrderNumbers.containsKey(adjacentLiteral) && (isVisited == null || !isVisited)){
+						// if it not visited and doesn't contain a key
+						topologicalSort(adjacentLiteral, visited, stack);	
+					} else if (!assignedComponents.contains(adjacentLiteral)){
+						// if w has not yet been assigned to a strongly connected component
+						while (preOrderNumbers.get(P.peek()) > preOrderNumbers.get(adjacentLiteral)){
+							// Repeatedly pop vertices from P until the top element of P 
+							// has a preorder number less than or equal to the preorder number of adjacent.
+							P.pop();
+						}
 					}
 				}
 			}
 		}
-		if (key.equals(P.peek())){
+		if (!dangerous && key.equals(P.peek())){
 			// Pop vertices from S until v has been popped, 
 			// and assign the popped vertices to a new component.
 			Set<Literal> component = new HashSet<>();
@@ -103,7 +111,8 @@ public class Graph {
 	/*
 	 * Calls TopologicalSort recursively with DFS to visit every implication.
 	 */
-	public void topologicalSort() throws Exception{
+	public void topologicalSort(boolean dangerous) throws Exception{
+		this.dangerous = dangerous;
 		Stack<Literal> stack = new Stack<>();
 		HashMap<Literal, Boolean> visited = new HashMap<>();
 		// Call the recursive helper function to store
