@@ -3,7 +3,6 @@ package sat;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -21,9 +20,9 @@ public class SATSolverTest {
     Literal na = a.getNegation();
     Literal nb = b.getNegation();
     Literal nc = c.getNegation();
+    static boolean is2SAT = true;
 	static Graph g = new Graph();
 	
-	// TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
 	public Formula readFile(String filename){
 		boolean hasP = false;
 		Clause[] clauses = null;
@@ -55,7 +54,8 @@ public class SATSolverTest {
 					String next = sc.next();
 					String[] values = next.trim().split(" ");
 					if (values.length > 2){
-						throw new IOException("The .cnf file has more than 2 literals in a clause.");
+						// throw new IOException("The .cnf file has more than 2 literals in a clause.");
+						is2SAT = false;
 					}
 					Literal[] literals = new Literal[values.length];
 					for (int i = 0; i < literals.length; i++){
@@ -101,30 +101,36 @@ public class SATSolverTest {
 	        String fileName = args[0];
 	        SATSolverTest r = new SATSolverTest();
 	        Formula f = r.readFile(fileName);
-
-			System.out.println("SAT solver with topological sort starts!!!");
-			long started = System.nanoTime(); 
-			try {
-				g.topologicalSort();
-			} catch(Exception e){
-				System.out.println(e);
-			} finally {
+	        long started;
+	        
+	        if (is2SAT){
+				System.out.println("SAT solver with topological sorting");
+				started = System.nanoTime(); 
+				try {
+					g.topologicalSort();
+				} catch(Exception e){
+					System.out.println(e);
+				} finally {
+					long time = System.nanoTime();
+					long timeTaken= time - started;
+					System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
+					System.out.println(g.getEnvironment());
+				}
+	        } else {
+				System.out.println("SAT solver starts!!!");
+				started = System.nanoTime(); 
+				Environment e = SATSolver.solve(f);
 				long time = System.nanoTime();
 				long timeTaken= time - started;
 				System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
-				System.out.println(g.getEnvironment());
-			}
+				if (e == null){
+					System.out.println("UNSATISFIABLE.");
+				} else 
+					System.out.println(e);
+	        }
+
 	
-			System.out.println("SAT solver starts!!!");
-			started = System.nanoTime(); 
-			Environment e = SATSolver.solve(f);
-			long time = System.nanoTime();
-			long timeTaken= time - started;
-			System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
-			if (e == null){
-				System.out.println("UNSATISFIABLE.");
-			} else 
-				System.out.println(e);
+
 //	        r.testSATSolver1();
 //	        r.testSATSolver2();
 		} else {
