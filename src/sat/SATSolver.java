@@ -7,7 +7,6 @@ import sat.env.Variable;
 import sat.formula.Clause;
 import sat.formula.Formula;
 import sat.formula.Literal;
-import sat.formula.NegLiteral;
 import sat.formula.PosLiteral;
 
 /**
