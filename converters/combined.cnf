@@ -1,6 +1,7 @@
 c This is a CNF SAT formula in the DIMACS CNF format,
 c produced with the bc2cnf translator by Tommi Junttila;
 c see http://users.ics.aalto.fi/tjunttil/circuits/index.html
+c Result <-> 33
 c N <-> 48
 c S31 <-> 48
 c S30 <-> 49
@@ -447,11 +448,10 @@ p cnf 607 1808
 32 -605 604 0
 -32 605 604 0
 -32 -605 -604 0
-33 530 -69 0
-33 -530 69 0
--33 530 69 0
--33 -530 -69 0
-33 0
+33 593 -78 0
+33 -593 78 0
+-33 593 78 0
+-33 -593 -78 0
 -34 -35 0
 -34 -36 0
 34 36 35 0
@@ -2127,3 +2127,4 @@ p cnf 607 1808
 605 -607 606 0
 -605 607 606 0
 -605 -607 -606 0
+33 0

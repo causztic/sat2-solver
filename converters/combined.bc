@@ -387,4 +387,4 @@ vp1 := NOT( AND(ns31, XB31, A31) );
 vp2 := NOT( AND(S31, nxb31, na31) ); 
 V := NOT( AND(vp1, vp2)); 
 N:= S31; 
-ASSIGN ODD(S10, s10);
+Result:=ODD(S1, s1);

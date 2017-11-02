@@ -100,6 +100,8 @@ public class FormulaReader {
 			e.printStackTrace();
 		} catch (IOException e){
 			e.printStackTrace();
+		} catch (ArrayIndexOutOfBoundsException e){
+			System.err.println("the CNF file has more clauses than included.");
 		} finally {
 			sc.close();
 		}
