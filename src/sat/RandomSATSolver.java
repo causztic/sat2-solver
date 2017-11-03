@@ -28,7 +28,7 @@ public class RandomSATSolver {
 	    		Iterator<Literal> it = clause.iterator();
 	    		while (it.hasNext()){
 	    			Literal lit = it.next();
-	    			env = env.put(lit.getVariable(), Math.random() > 0.5 ? Bool.TRUE : Bool.FALSE);
+	    			env = env.put(lit.getVariable(), new Random().nextBoolean() ? Bool.TRUE : Bool.FALSE);
 	    		}
 	    	}
 	    	
@@ -72,7 +72,7 @@ public class RandomSATSolver {
 	    			Literal tempLit = literalIt.next();
 	    			while (literalIt.hasNext()){
 	    				Literal nextLit = literalIt.next();
-	    				if (Math.random() > 0.5) {
+	    				if (new Random().nextBoolean()) {
 	    					// choose randomly
 	    					tempLit = nextLit;
 	    				}
