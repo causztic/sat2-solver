@@ -8,15 +8,19 @@ public class RandomSATSolver {
     Environment env = new Environment();
 
     protected ImList<Clause> clauses;
+    private int numberOfVariables;
     private List<Clause> unsatClauses = new ArrayList<>();
 
     public RandomSATSolver(Formula formula){
         clauses = formula.getClauses();
+        for (Clause clause: clauses){
+        	numberOfVariables += clause.size();
+        }
     }
     public Environment solve(){
     	long outerCounter = 0;
     	// repeat outside log2n times to reinitialize environment randomly
-    	while (outerCounter < (Math.log(clauses.size() / Math.log(2))) ){
+    	while (outerCounter < (Math.log(numberOfVariables / Math.log(2))) ){
 	    	Environment env = new Environment();
 	 
 	    	// set initial environment
@@ -30,7 +34,7 @@ public class RandomSATSolver {
 	    	
 	    	long counter = 0;
 	    	// repeat inside for at most 2n^2 
-	    	while (counter < (2 * Math.pow(clauses.size(), 2)) ){
+	    	while (counter < (2 * Math.pow(numberOfVariables, 2)) ){
 	    		
 	    		unsatClauses.clear(); // reset unsat clauses.
 	    		
