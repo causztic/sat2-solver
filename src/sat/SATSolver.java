@@ -59,23 +59,21 @@ public class SATSolver {
             } 
         }
 
-        Literal l = minClause.chooseLiteral();
+        Literal literal = minClause.chooseLiteral();
         if (minClause.isUnit()) {
         	// if minimum size is 1, use it and recursively solve.
         	Environment newEnv = null;
         	ImList<Clause> newClauses = new EmptyImList<Clause>();
-      	   if (l instanceof PosLiteral) {
-      		   newEnv = env.putTrue(l.getVariable());
-      		   newClauses = substitute(clauses,l);
+      	   if (literal instanceof PosLiteral) {
+      		   newEnv = env.putTrue(literal.getVariable());
+      		   newClauses = substitute(clauses,literal);
       	   } else {
-      		   newEnv = env.putFalse(l.getVariable());
-      		   newClauses = substitute(clauses,l);
+      		   newEnv = env.putFalse(literal.getVariable());
+      		   newClauses = substitute(clauses,literal);
       	   }
   		   return solve(newClauses, newEnv);
         } else {
       	   // If minimum sized clause has size greater than 1, choose an arbitrary literal; assign it to true and then recurse
-      	   
-      	   Literal literal = minClause.chooseLiteral();
       	   Variable var = literal.getVariable();
       	   Environment newEnv = null;
       	   

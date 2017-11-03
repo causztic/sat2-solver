@@ -13,6 +13,20 @@ public class SATSolverTest {
     Literal nc = c.getNegation();
 
 	
+    public void testRandomizer(Formula f){
+    	System.out.println("Solving with randomizer..");
+		long started = System.nanoTime(); 
+		RandomSATSolver r = new RandomSATSolver(f);
+		Environment e = r.solve();
+		long time = System.nanoTime();
+		long timeTaken= time - started;
+		System.out.println("Time:" + timeTaken/1_000_000.0 + "ms");
+		if (e == null){
+			System.out.println("UNSATISFIABLE.");
+		} else 
+			System.out.println(e);
+    }
+    
 	public void testTopological(FormulaReader reader, Boolean dangerous){
 		Graph graph = reader.getGraph();
 		System.out.println("Solving with magic..");
@@ -56,6 +70,7 @@ public class SATSolverTest {
 	        	boolean dangerous = false;
 	        	if (args.length >= 2 && args[1].equals("dangerous"))
 	        		dangerous = true;
+	        	r.testRandomizer(f);
 	        	r.testTopological(reader, dangerous);
 	        } else {
 	        	r.testDPLL(f);
