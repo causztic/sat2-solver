@@ -65,8 +65,8 @@ public class RandomSATSolver {
 	    		
 	    		if (unsatClauses.size() > 0){
 	    			// there are unsatisfied clauses.
-	    			// get an random clause in the arraylist to flip
-	    			// get a random literal from the clause.
+	    			// get an random clause in the arraylist 
+	    			// get a random literal from the clause to flip.
 	    			Clause chosen = unsatClauses.get(new Random().nextInt(unsatClauses.size()));
 	    			Iterator<Literal> literalIt = chosen.iterator();
 	    			Literal tempLit = literalIt.next();
