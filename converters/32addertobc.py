@@ -1,9 +1,3 @@
-one = open('1bitAdder.bc','w');
-one.write('BC1.1\n')
-one.write('s0:= ODD(ALUFN,A1,B1);\n')
-one.write('CO_1:= OR(AND(A1,B1),AND(B1,ALUFN),AND(A1,ALUFN));\n\n')
-one.close()
-
 adder = open('32Adder.bc','w');
 adder.write('BC1.1\n')
 adder.write("XB_0:=ODD(ALUFN, B0);\n")
