@@ -3,6 +3,12 @@ package sat;
 import sat.env.*;
 import sat.formula.*;
 
+/* 
+ * Running SATSolverTest.
+ * 1. Set the arg[0] to the filepath of the .cnf file to test. For 50.004, please only use 2SAT!
+ * 2. Set the arg[1] to "dangerous" (no quotes) to skip satisfiability checking for topological sort.
+ * 3. Run and enjoy.
+ */
 
 public class SATSolverTest {
     Literal a = PosLiteral.make("a");
